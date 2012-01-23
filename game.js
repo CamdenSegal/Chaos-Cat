@@ -18,13 +18,13 @@
                     .attr({x: xloc, y: i * 16, z: -5});
             }*/
             Crafty.e("Bottom")
-                .attr({x: xloc, y: 432});
+                .attr({x: xloc, y: 0});
         }
 
         function initializeBackground() {
             var i;
-            for (i = 0; i < 51; i += 1) {
-                makeBackgroundStrip(i * 16);
+            for (i = 0; i < 6; i += 1) {
+                makeBackgroundStrip(i * 160);
             }
         }
 
@@ -59,7 +59,7 @@
 
         Crafty.sprite(16, "media/spritesheet.png", {
             Cat: [0, 6, 9, 7],
-            Floor: [11, 1, 1, 3],
+            //Floor: [11, 1, 1, 3],
             Wall1: [11, 0],
             Wall2: [12, 0],
             Wall3: [13, 0],
@@ -83,7 +83,7 @@
 
 
         Crafty.scene("loading", function(){
-            Crafty.load(["media/spritesheet.png"],function(){
+            Crafty.load(["media/spritesheet.png","media/bg.png"],function(){
                 Crafty.scene("main");
             });
 
@@ -216,21 +216,13 @@
 
         Crafty.c("Bottom", {
             init: function(){
-                this.requires("2D, DOM, Floor, Surface, BG")
-                    .surface(24);
-                this.bind("EnterFrame", function() {
-                    if(this.x < (Crafty.viewport.x-16)) {
-                        this.shift(816,0,0,0);
-                    }
-                });
-            }
-        });
+                this.requires("2D, DOM, Surface, BG, Image")
+                    .image("media/bg.png")
+                    .surface(458);
 
-        Crafty.c ("BG", {
-            init: function(){
                 this.bind("EnterFrame", function() {
-                    if(this.x < (Crafty.viewport.x-16)) {
-                        this.shift(816,0,0,0);
+                    if(this.x < (Crafty.viewport.x-160)) {
+                        this.shift(960,0,0,0);
                     }
                 });
             }
