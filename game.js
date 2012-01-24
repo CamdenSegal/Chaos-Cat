@@ -175,6 +175,7 @@
                 this.bind("EnterFrame", function () {
                     if(this.y > (458-this.h)){
                         this.y = 455-this.h;
+                        this.isFalling = false;
                     }
 
                     var boost = (Crafty.tempEnergy) / 600, l, h, dif, tempE;
