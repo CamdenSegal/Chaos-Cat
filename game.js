@@ -7,6 +7,7 @@
         //Crafty.canvas.init();
         Crafty.score = 0;
         Crafty.energy = 1000;
+        Crafty.tempEnergy = 0;
         Crafty.platGen = 10;
         Crafty.platPrev = 0;
 
@@ -37,15 +38,15 @@
             } else if (type === 4) {
                 return Crafty.e("Knockable, LargeRoach, Walker").walker(1).knockable(50, 200);
             } else if (type === 5) {
-                return Crafty.e("Knockable, FoodBall").knockable(5, 250);
+                return Crafty.e("Knockable, FoodBall").knockable(100, -100);
             } else if (type === 6) {
-                return Crafty.e("Knockable, SpringYellow").knockable(50, 20);
+                return Crafty.e("Knockable, SpringYellow").knockable(50, 60);
             } else if (type === 7) {
-                return Crafty.e("Knockable, SpringRed").knockable(50, 20);
+                return Crafty.e("Knockable, SpringRed").knockable(50, 60);
             } else if (type === 8) {
-                return Crafty.e("Knockable, CannedFood").knockable(30, 300);
+                return Crafty.e("Knockable, CannedFood").knockable(30, -300);
             } else if (type === 9) {
-                return Crafty.e("Knockable, Catnip").knockable(100, 200);
+                return Crafty.e("Knockable, Catnip, Awesome").knockable(100, 0);
             }
         }
 
@@ -132,6 +133,9 @@
                 z: 100
             }).gravity("Solid");
 
+            Crafty.guiPanel = Crafty.e("2D, DOM")
+                .attr({x: 0, y: 0, z: 200});
+
             Crafty.scoreText = Crafty.e("2D, DOM, Text").attr({
                 x: 0,
                 y: 460,
@@ -142,6 +146,8 @@
                 "text-align": "right"
             });
 
+            Crafty.guiPanel.attach( Crafty.scoreText);
+
             Crafty.energyText = Crafty.e("2D, DOM, Text").attr({
                 x: 0,
                 y: 460,
@@ -151,6 +157,8 @@
             }).text("0").css({
                 "text-align": "left"
             });
+
+            Crafty.guiPanel.attach( Crafty.energyText);
 
         });
 
@@ -165,19 +173,18 @@
                 ]).animate('run', 16, -1);
                 this.nextPlat = 0;
                 this.bind("EnterFrame", function () {
-                    var boost = Crafty.energy / 700, l, h, dif, tempE;
-                    this.x += boost;
-                    Crafty.scoreText.x += boost;
-                    Crafty.energyText.x += boost;
-
-                    this.x += 5;
+                    var boost = (Crafty.energy+Crafty.tempEnergy) / 800, l, h, dif, tempE;
+                    this.x += boost + 5;
                     Crafty.viewport.x = -(this.x - 100);
-                    Crafty.scoreText.x += 5;
-                    Crafty.energyText.x += 5;
+                    Crafty.guiPanel.x += boost + 5;
+
                     Crafty.energy -= 1;
                     if (Crafty.energy <= 0) {
                         Crafty.scene("gameover");
+                    }else if(Crafty.energy > 1000){
+                        Crafty.energy = 1000;
                     }
+
                     Crafty.energyText.text(Crafty.energy);
                     Crafty.platGen -= 1;
 
@@ -453,16 +460,45 @@
                     this.isFalling = true;
                 }
             }).bind("KeyDown", function () {
-                if (this.isDown("UP_ARROW") || this.isDown("W") || this.isDown("SPACE") || this.isDown("ENTER")) {this.up = true; }
+                if (this.isDown("UP_ARROW") || this.isDown("W") || this.isDown("SPACE") || this.isDown("ENTER")) {
+                    if(!this.up) {
+                        Crafty.energy -= 10;
+                    }
+                    this.up = true; 
+                }
             });
             Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function () {
+                if(!this.up) {
+                    Crafty.energy -= 10;
+                }
                 this.up = true;
             });
             Crafty.addEvent(this, Crafty.stage.elem, "touchstart", function () {
+                if(!this.up) {
+                    Crafty.energy -= 10;
+                }
                 this.up = true;
             });
 
             return this;
+        }
+    });
+
+    Crafty.c("Awesome",{
+        init: function() {
+            this.bind("Knocked", this.knock);
+        },
+
+        knock: function() {
+            console.log('Awesome knocked function called!');
+            Crafty.tempEnergy += 5000;
+            var fyeah = Crafty.e("2D, DOM, Text")
+                .attr(Crafty.guiPanel.pos())
+                .text("FYEAH")
+                .css({'text-align':'center','color':'#fff','font-size':'40px'})
+                .delay(function() {Crafty.tempEnergy -= 5000; this.destroy();}, 5000);
+            Crafty.guiPanel.attach(fyeah);
+            fyeah.shift(300,200);
         }
     });
 
