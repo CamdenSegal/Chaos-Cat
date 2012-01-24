@@ -6,7 +6,7 @@
         Crafty.init(800, 480);
         //Crafty.canvas.init();
         Crafty.score = 0;
-        Crafty.energy = 1000;
+        Crafty.energy = 500;
         Crafty.tempEnergy = 0;
         Crafty.platGen = 10;
         Crafty.platPrev = 0;
@@ -38,15 +38,15 @@
             } else if (type === 4) {
                 return Crafty.e("Knockable, LargeRoach, Walker").walker(1).knockable(50, 200);
             } else if (type === 5) {
-                return Crafty.e("Knockable, FoodBall").knockable(100, -100);
+                return Crafty.e("Knockable, FoodBall").knockable(100, 100);
             } else if (type === 6) {
                 return Crafty.e("Knockable, SpringYellow").knockable(50, 60);
             } else if (type === 7) {
                 return Crafty.e("Knockable, SpringRed").knockable(50, 60);
             } else if (type === 8) {
-                return Crafty.e("Knockable, CannedFood").knockable(30, -300);
+                return Crafty.e("Knockable, CannedFood").knockable(30, 200);
             } else if (type === 9) {
-                return Crafty.e("Knockable, Catnip, Awesome").knockable(100, 0);
+                return Crafty.e("Knockable, Catnip, Awesome").knockable(100, 500);
             }
         }
 
@@ -173,16 +173,20 @@
                 ]).animate('run', 16, -1);
                 this.nextPlat = 0;
                 this.bind("EnterFrame", function () {
-                    var boost = (Crafty.energy+Crafty.tempEnergy) / 800, l, h, dif, tempE;
-                    this.x += boost + 5;
+                    if(this.y > (458-this.h)){
+                        this.y = 455-this.h;
+                    }
+
+                    var boost = (Crafty.tempEnergy) / 600, l, h, dif, tempE;
+                    this.x += boost + 8;
                     Crafty.viewport.x = -(this.x - 100);
-                    Crafty.guiPanel.x += boost + 5;
+                    Crafty.guiPanel.x += boost + 8;
 
                     Crafty.energy -= 1;
                     if (Crafty.energy <= 0) {
                         Crafty.scene("gameover");
-                    }else if(Crafty.energy > 1000){
-                        Crafty.energy = 1000;
+                    }else if(Crafty.energy > 500){
+                        Crafty.energy = 500;
                     }
 
                     Crafty.energyText.text(Crafty.energy);
@@ -190,7 +194,7 @@
 
                     if (Crafty.randRange(1, Crafty.platGen) === 1 || Crafty.platGen < 1) {
 
-                        l = Crafty.randRange(5, 20) - Crafty.energy / 400;
+                        l = Crafty.randRange(5, 20);
                         if (l < 2) {
                             l = 2;
                         }
@@ -208,7 +212,7 @@
                             dif *= -1;
                         }
                         if (dif > 32) {
-                            Crafty.platGen += 5*l;
+                            Crafty.platGen += 3*l;
                             Crafty.platPrev = h;
 
                             Crafty.e("Platform").platform(l).attr({
@@ -233,7 +237,7 @@
 
         Crafty.c("Bottom", {
             init: function () {
-                this.requires("2D, DOM, Surface, BG, Image").image("media/bg.png").surface(458);
+                this.requires("2D, DOM, Surface, BG, Image").image("media/bg.png").surface(455);
 
                 this.bind("EnterFrame", function () {
                     if (this.x < (Crafty.viewport.x - 160)) {
