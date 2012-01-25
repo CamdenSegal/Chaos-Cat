@@ -480,23 +480,29 @@
                 }
             }).bind("KeyDown", function () {
                 if (this.isDown("UP_ARROW") || this.isDown("W") || this.isDown("SPACE") || this.isDown("ENTER")) {
+                    if(!this.isFalling){
+                        if(!this.up) {
+                            Crafty.energy -= 10;
+                        }
+                        this.up = true; 
+                    }
+                }
+            });
+            Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function () {
+                 if(!this.isFalling){
                     if(!this.up) {
                         Crafty.energy -= 10;
                     }
                     this.up = true; 
                 }
             });
-            Crafty.addEvent(this, Crafty.stage.elem, "mousedown", function () {
-                if(!this.up) {
-                    Crafty.energy -= 10;
-                }
-                this.up = true;
-            });
             Crafty.addEvent(this, Crafty.stage.elem, "touchstart", function () {
-                if(!this.up) {
-                    Crafty.energy -= 10;
+                 if(!this.isFalling){
+                    if(!this.up) {
+                        Crafty.energy -= 10;
+                    }
+                    this.up = true; 
                 }
-                this.up = true;
             });
 
             return this;
