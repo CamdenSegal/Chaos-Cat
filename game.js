@@ -191,6 +191,12 @@
                     }
 
                     Crafty.energyText.text(Crafty.energy);
+
+                    
+                    var animSpeed = 16-(4*(Crafty.tempEnergy/5000));
+                    if(animSpeed < 4) {animSpeed = 4;}
+                    this.animate('run', animSpeed, -1);
+
                     Crafty.platGen -= 1;
 
                     if (Crafty.randRange(1, Crafty.platGen) === 1 || Crafty.platGen < 1) {
@@ -232,6 +238,14 @@
                         }
 
                     }
+                    /*if (Crafty.randRange(1,3) === 1){
+                        h = Crafty.randRange(1,400);
+                        tempE = makeEntity();
+                        if(tempE){
+                            tempE.attr({x: this.x + 750, y: h, z: 51});
+                            tempE.addComponent("PlatformGravity").gravity("Solid");
+                        }
+                    }*/
                 });
             }
         });
