@@ -133,7 +133,7 @@
                 z: 100
             }).gravity("Solid");
 
-            Crafty.guiPanel = Crafty.e("2D, DOM")
+            Crafty.guiPanel = Crafty.e("2D")
                 .attr({x: 0, y: 0, z: 200});
 
             Crafty.scoreText = Crafty.e("2D, DOM, Text").attr({
@@ -170,7 +170,7 @@
                     [9, 6],
                     [18, 6],
                     [27, 6]
-                ]).animate('run', 16, -1);
+                    ]).animate('run', 16, -1);
                 this.nextPlat = 0;
                 this.bind("EnterFrame", function () {
                     if(this.y > (458-this.h)){
@@ -198,6 +198,7 @@
                     this.animate('run', animSpeed, -1);
 
                     Crafty.platGen -= 1;
+                    Crafty.platGen -= Crafty.tempEnergy/5000;
 
                     if (Crafty.randRange(1, Crafty.platGen) === 1 || Crafty.platGen < 1) {
 
@@ -314,6 +315,9 @@
                         this.destroy();
                     }
                 });
+                this.delay(function() {
+                    this.destroy();
+                    }, 10000);
             }
         });
 
@@ -363,7 +367,7 @@
 
         Crafty.c("Walker", {
             init: function () {
-                this.requires("2D,DOM, PlatformGravity").gravity("Solid");
+                this.requires("2D, PlatformGravity").gravity("Solid");
             },
 
             walker: function (speed) {
