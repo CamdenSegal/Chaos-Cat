@@ -14,7 +14,7 @@
         function makeBackgroundStrip(xloc) {
             var i, wallType;
             /*for (i = 0; i < 27; i += 1) {
-                wallType = Crafty.randRange(1, 4);
+                wallType = Crafty.math.randomInt(1, 4);
                 Crafty.e("2D, DOM, BG,Wall" + wallType)
                     .attr({x: xloc, y: i * 16, z: -5});
             }*/
@@ -32,7 +32,7 @@
         }
 
         function makeEntity() {
-            var type = Crafty.randRange(1, 9);
+            var type = Crafty.math.randomInt(1, 9);
             if (type < 3) {
                 return Crafty.e("Knockable, SmallRoach, Walker").walker(1).knockable(10, 100);
             } else if (type === 4) {
@@ -200,20 +200,20 @@
                     Crafty.platGen -= 1;
                     Crafty.platGen -= Crafty.tempEnergy/5000;
 
-                    if (Crafty.randRange(1, Crafty.platGen) === 1 || Crafty.platGen < 1) {
+                    if (Crafty.math.randomInt(1, Crafty.platGen) === 1 || Crafty.platGen < 1) {
 
-                        l = Crafty.randRange(5, 20);
+                        l = Crafty.math.randomInt(5, 20);
                         if (l < 2) {
                             l = 2;
                         }
                         h = 300;
                         if (this.y > 300) {
-                            h = Crafty.randRange(250, 390);
+                            h = Crafty.math.randomInt(250, 390);
                         } else {
-                            h = Crafty.randRange(this.y - 100, this.y + 100);
+                            h = Crafty.math.randomInt(this.y - 100, this.y + 100);
                         }
                         if (h < 50) {
-                            h = 50 + Crafty.randRange(0, 200);
+                            h = 50 + Crafty.math.randomInt(0, 200);
                         }
                         dif = h - Crafty.platPrev;
                         if (dif < 0) {
@@ -239,8 +239,8 @@
                         }
 
                     }
-                    /*if (Crafty.randRange(1,3) === 1){
-                        h = Crafty.randRange(1,400);
+                    /*if (Crafty.math.randomInt(1,3) === 1){
+                        h = Crafty.math.randomInt(1,400);
                         tempE = makeEntity();
                         if(tempE){
                             tempE.attr({x: this.x + 750, y: h, z: 51});
@@ -256,7 +256,7 @@
                 this.requires("2D, DOM, Surface, BG, Image").image("media/bg.png").surface(455);
 
                 this.bind("EnterFrame", function () {
-                    if (this.x < (Crafty.viewport.x - 160)) {
+                    if (this.x < (-Crafty.viewport.x - 160)) {
                         this.shift(1120, 0, 0, 0);
                     }
                 });
@@ -374,7 +374,7 @@
                 if (!speed) {
                     speed = 1;
                 }
-                speed = speed * (Crafty.randRange(0, 2) - 1);
+                speed = speed * (Crafty.math.randomInt(0, 2) - 1);
 
                 if (speed < 0) {
                     this.flip('X');
