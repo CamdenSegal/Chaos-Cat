@@ -3,7 +3,30 @@
 
     window.onload = function () {
         //start crafty
-        Crafty.init(800, 480);
+        var winW = 800, winH = 480;
+        if (document.body && document.body.offsetWidth) {
+         winW = document.body.offsetWidth;
+         winH = document.body.offsetHeight;
+        }
+        if (document.compatMode=='CSS1Compat' &&
+            document.documentElement &&
+            document.documentElement.offsetWidth ) {
+         winW = document.documentElement.offsetWidth;
+         winH = document.documentElement.offsetHeight;
+        }
+        if (window.innerWidth && window.innerHeight) {
+         winW = window.innerWidth;
+         winH = window.innerHeight;
+        }
+        if(winW > 800){
+            winW = 800;
+        }
+        if(winH > 480){
+            winH = 480;
+        }
+        Crafty.screenWidth = winW;
+        Crafty.screenHeight = winH;
+        Crafty.init(Crafty.screenWidth, Crafty.screenHeight);
         //Crafty.canvas.init();
         Crafty.score = 0;
         Crafty.energy = 500;
@@ -11,26 +34,24 @@
         Crafty.platGen = 10;
         Crafty.platPrev = 0;
 
+        //Takes in a location and places a background strip.
         function makeBackgroundStrip(xloc) {
             var i, wallType;
-            /*for (i = 0; i < 27; i += 1) {
-                wallType = Crafty.math.randomInt(1, 4);
-                Crafty.e("2D, DOM, BG,Wall" + wallType)
-                    .attr({x: xloc, y: i * 16, z: -5});
-            }*/
             Crafty.e("Bottom").attr({
                 x: xloc,
-                y: 0
+                y: Crafty.screenHeight - 480
             });
         }
 
+        //Creates 7 background strips to fill the full background
         function initializeBackground() {
-            var i;
-            for (i = 0; i < 7; i += 1) {
+            var i, numPanels = (Crafty.screenWidth / 160) + 2;
+            for (i = 0; i < numPanels; i += 1) {
                 makeBackgroundStrip(i * 160);
             }
         }
 
+        //Returns a random entity.
         function makeEntity() {
             var type = Crafty.math.randomInt(1, 9);
             if (type < 3) {
@@ -50,14 +71,9 @@
             }
         }
 
-
+        //Specifies the location of sprites on the spritesheet
         Crafty.sprite(16, "media/spritesheet.png", {
             Cat: [0, 6, 9, 7],
-            //Floor: [11, 1, 1, 3],
-            Wall1: [11, 0],
-            Wall2: [12, 0],
-            Wall3: [13, 0],
-            Wall4: [14, 0],
             PlatformMain: [13, 1, 1, 2],
             PlatformLeft: [12, 1, 1, 2],
             PlatformRight: [14, 1, 1, 2],
@@ -75,31 +91,44 @@
             Rock: [12, 4, 2, 1]
         });
 
+        //Specifies the location of sprites on the spritesheet
+        Crafty.sprite(32, "media/platforms.png", {
+            WhitePlatform2: [0, 0,2,1],
+            WhitePlatform8: [2, 0,8,1],
+            WhitePlatform4: [0, 1,4,1],
+            WhitePlatform6: [4, 1,6,1],
+            WhitePlatform7: [0, 2,7,1],
+            WhitePlatform3: [7, 2,3,1],
+            WhitePlatform5: [0, 3,5,1],
+            WhitePlatform9: [0, 4,9,1],
+            WhitePlatform10: [0, 5,10,1]
+        });
 
+        //Loading scene
         Crafty.scene("loading", function () {
-            Crafty.load(["media/spritesheet.png", "media/bg.png"], function () {
+            //Load resources and change to main scene.
+            Crafty.load(["media/spritesheet.png", "media/bg.png", "media/platforms.png"], function () {
                 Crafty.scene("main");
             });
-
             Crafty.background("#333");
             Crafty.e("2D, DOM, Text").attr({
-                w: 100,
+                w: Crafty.screenWidth,
                 h: 100,
-                x: 350,
-                y: 100
+                x: 0,
+                y: 0
             }).text("Loading...").css({
                 "text-align": "center"
             });
-
         });
         Crafty.scene("loading");
 
+        //Gameover scene
         Crafty.scene("gameover", function () {
             Crafty.background("#666");
             Crafty.viewport.x = 0;
             Crafty.viewport.y = 0;
             Crafty.e("2D, DOM, Text").attr({
-                w: 800,
+                w: Crafty.screenWidth,
                 h: 100,
                 x: 0,
                 y: 100
@@ -109,7 +138,7 @@
                 "font-size": "60px"
             });
             var score = Crafty.e("2D, DOM, Text").attr({
-                w: 800,
+                w: Crafty.screenWidth,
                 h: 50,
                 x: 0,
                 y: 250
@@ -119,7 +148,6 @@
                 "font-size": "100px"
             });
             score.text(Crafty.score);
-
         });
 
         Crafty.scene("main", function () {
@@ -138,9 +166,9 @@
 
             Crafty.scoreText = Crafty.e("2D, DOM, Text").attr({
                 x: 0,
-                y: 460,
+                y: Crafty.screenHeight - 20,
                 z: 102,
-                w: 780,
+                w: Crafty.screenWidth - 20,
                 h: 20
             }).text("0").css({
                 "text-align": "right"
@@ -150,9 +178,9 @@
 
             Crafty.energyText = Crafty.e("2D, DOM, Text").attr({
                 x: 0,
-                y: 460,
+                y: Crafty.screenHeight - 20,
                 z: 102,
-                w: 780,
+                w: Crafty.screenWidth - 20,
                 h: 20
             }).text("0").css({
                 "text-align": "left"
@@ -165,7 +193,7 @@
 
         Crafty.c("Player", {
             init: function () {
-                this.requires("2D, DOM, Jump, Cat, SpriteAnimation, PlatformGravity, Collision").jump(6).collision(new Crafty.polygon([0, 40], [130, 40], [130, 112], [0, 112])).animate("run", [
+                this.requires("2D, DOM, Jump, Cat, SpriteAnimation, PlatformGravity, Collision").jump(7).collision(new Crafty.polygon([0, 40], [130, 40], [130, 112], [0, 112])).animate("run", [
                     [0, 6],
                     [9, 6],
                     [18, 6],
@@ -173,8 +201,8 @@
                     ]).animate('run', 16, -1);
                 this.nextPlat = 0;
                 this.bind("EnterFrame", function () {
-                    if(this.y > (458-this.h)){
-                        this.y = 455-this.h;
+                    if(this.y > (Crafty.screenHeight-22-this.h)){
+                        this.y = Crafty.screenHeight-25-this.h;
                         this.isFalling = false;
                     }
 
@@ -202,13 +230,13 @@
 
                     if (Crafty.math.randomInt(1, Crafty.platGen) === 1 || Crafty.platGen < 1) {
 
-                        l = Crafty.math.randomInt(5, 20);
+                        l = Crafty.math.randomInt(2, 10);
                         if (l < 2) {
                             l = 2;
                         }
-                        h = 300;
-                        if (this.y > 300) {
-                            h = Crafty.math.randomInt(250, 390);
+                        h = Crafty.screenHeight / 2;
+                        if (this.y > Crafty.screenHeight - 180) {
+                            h = Crafty.math.randomInt(Crafty.screenHeight - 230, Crafty.screenHeight - 90);
                         } else {
                             h = Crafty.math.randomInt(this.y - 100, this.y + 100);
                         }
@@ -220,18 +248,18 @@
                             dif *= -1;
                         }
                         if (dif > 32) {
-                            Crafty.platGen += 3*l;
+                            Crafty.platGen += 6*l;
                             Crafty.platPrev = h;
 
                             Crafty.e("Platform").platform(l).attr({
-                                x: (this.x + 900 + 16 * l),
+                                x: (this.x + Crafty.screenWidth + 100 ),
                                 y: h,
                                 z: 50
                             });
                             tempE = makeEntity();
                             if (tempE) {
                                 tempE.attr({
-                                    x: (this.x + 900 + 8 * l),
+                                    x: (this.x + Crafty.screenWidth + 100 + 8 * l),
                                     y: h - tempE.h + 7,
                                     z: 51
                                 });
@@ -257,7 +285,7 @@
 
                 this.bind("EnterFrame", function () {
                     if (this.x < (-Crafty.viewport.x - 160)) {
-                        this.shift(1120, 0, 0, 0);
+                        this.shift(Crafty.screenWidth + 320, 0, 0, 0);
                     }
                 });
             }
@@ -288,15 +316,16 @@
         Crafty.c("Platform", {
 
             init: function () {
-                this.requires("2D, PlatformRight, DOM, Scroller");
+                this.requires("2D, PlatformRight, DOM, Scroller,Surface").surface(8);
             },
 
             platform: function (segs) {
-                var i;
+                /*var i;
                 for (i = 1; i < segs; i += 1) {
                     this.attach(Crafty.e("PlatformSegment").shift(-i * 16, 0));
                 }
-                this.attach(Crafty.e("2D, DOM, PlatformLeft, Scroller").shift(-(i) * 16));
+                this.attach(Crafty.e("2D, DOM, PlatformLeft, Scroller").shift(-(i) * 16));*/
+                this.addComponent("WhitePlatform"+segs);
                 return this;
             }
         });
@@ -345,7 +374,7 @@
                         this.bind("EnterFrame", function () {
                             this.y -= this.falling;
                             this.falling -= 0.3;
-                            if (this.y > 500) {
+                            if (this.y > Crafty.screenHeight+100) {
                                 this.destroy();
                             }
                         });
@@ -388,7 +417,7 @@
         });
 
         Crafty.c("PlatformGravity", {
-            gravityStrength: 0.2,
+            gravityStrength: 0.3,
             gy: 0,
             isFalling: true,
             anti: null,
@@ -465,7 +494,7 @@
         });
     };
     Crafty.c("Jump", {
-        speed: 3,
+        speed: 6,
         up: false,
 
         init: function () {
@@ -527,7 +556,7 @@
                 .css({'text-align':'center','color':'#fff','font-size':'40px'})
                 .delay(function() {Crafty.tempEnergy -= 5000; this.destroy();}, 5000);
             Crafty.guiPanel.attach(fyeah);
-            fyeah.shift(300,200);
+            fyeah.shift(Crafty.screenWidth / 2 - 100,Crafty.screenHeight/2 - 40);
         }
     });
 
