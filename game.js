@@ -55,9 +55,9 @@
         function makeEntity() {
             var type = Crafty.math.randomInt(1, 9);
             if (type < 3) {
-                return Crafty.e("Knockable, SmallRoach, Walker").walker(1).knockable(10, 100);
+                return Crafty.e("Knockable, SmallRoach, Walker, DeathAnimation").walker(1).knockable(10, 100).deathAnimation([[8,0]],2);
             } else if (type === 4) {
-                return Crafty.e("Knockable, LargeRoach, Walker").walker(1).knockable(50, 200);
+                return Crafty.e("Knockable, LargeRoach, Walker, DeathAnimation").walker(1).knockable(50, 200).deathAnimation([[4,0]],2);
             } else if (type === 5) {
                 return Crafty.e("Knockable, FoodBall").knockable(100, 100);
             } else if (type === 6) {
@@ -88,7 +88,8 @@
             Catnip: [6, 2, 2, 1],
             Fly: [7, 4],
             Chicken: [6, 3],
-            Rock: [12, 4, 2, 1]
+            Rock: [12, 4, 2, 1],
+            FYEAH: [0,13,9,2]
         });
 
         //Specifies the location of sprites on the spritesheet
@@ -176,17 +177,15 @@
 
             Crafty.guiPanel.attach( Crafty.scoreText);
 
-            Crafty.energyText = Crafty.e("2D, DOM, Text").attr({
-                x: 0,
-                y: Crafty.screenHeight - 20,
-                z: 102,
-                w: Crafty.screenWidth - 20,
-                h: 20
-            }).text("0").css({
-                "text-align": "left"
-            });
 
-            Crafty.guiPanel.attach( Crafty.energyText);
+            var energyBar = Crafty.e("EnergyBar").attr({
+                x: 0,
+                y: 10,
+                z: 102,
+                w: 250,
+                h: 20
+            });
+            Crafty.guiPanel.attach( energyBar);
 
         });
 
@@ -217,9 +216,6 @@
                     }else if(Crafty.energy > 500){
                         Crafty.energy = 500;
                     }
-
-                    Crafty.energyText.text(Crafty.energy);
-
                     
                     var animSpeed = 16-(4*(Crafty.tempEnergy/5000));
                     if(animSpeed < 4) {animSpeed = 4;}
@@ -275,6 +271,21 @@
                             tempE.addComponent("PlatformGravity").gravity("Solid");
                         }
                     }*/
+                });
+            }
+        });
+
+        Crafty.c("EnergyBar",{
+            init: function() {
+                this.requires("2D, DOM")
+                    .css({ "background" : "#e78447" });
+                this.bind("EnterFrame",function () {
+                    this.w = Crafty.energy / 2;
+                    if(Crafty.tempEnergy){
+                        this.css({"background":"#fcdbcc"});
+                    }else{
+                        this.css({"background":"#e78447", "box-shadow":"none"});
+                    }
                 });
             }
         });
@@ -339,8 +350,11 @@
 
         Crafty.c("Scroller", {
             init: function () {
+                this.requires("Delay");
                 this.bind("EnterFrame", function () {
                     if (this.x < (Crafty.viewport.x - 100)) {
+                        this.destroy();
+                    }else if(this.y > 550){
                         this.destroy();
                     }
                 });
@@ -390,6 +404,25 @@
                     ev = sv * 10;
                 }
                 this.energyVal = ev;
+                return this;
+            }
+        });
+        
+        Crafty.c("DeathAnimation", {
+            frames: [],
+            speed: 1,
+
+            init: function () {
+                this.requires("2D, Knockable, SpriteAnimation");
+            },
+
+            deathAnimation: function (frames, aspeed){
+                this.animate('die',frames);
+                this.speed = aspeed;
+                this.bind("Knocked", function (){
+                    this.animate('die',this.speed,-1);
+                    
+                });
                 return this;
             }
         });
@@ -548,15 +581,18 @@
         },
 
         knock: function() {
-            console.log('Awesome knocked function called!');
+            //console.log('Awesome knocked function called!');
             Crafty.tempEnergy += 5000;
-            var fyeah = Crafty.e("2D, DOM, Text")
+            this.fyeah = Crafty.e("2D, DOM, FYEAH, SpriteAnimation")
                 .attr(Crafty.guiPanel.pos())
-                .text("FYEAH")
-                .css({'text-align':'center','color':'#fff','font-size':'40px'})
-                .delay(function() {Crafty.tempEnergy -= 5000; this.destroy();}, 5000);
-            Crafty.guiPanel.attach(fyeah);
-            fyeah.shift(Crafty.screenWidth / 2 - 100,Crafty.screenHeight/2 - 40);
+                .animate("flash", [[0,13],[9,13]])
+                .animate("flash",2,-1)
+                .timeout(function() {Crafty.tempEnergy -= 5000; this.destroy();}, 5000);
+            this.fyeah.w = 16*9;
+            this.fyeah.h = 16*2;
+            this.fyeah.z = 400;
+            Crafty.guiPanel.attach(this.fyeah);
+            this.fyeah.shift(Crafty.screenWidth / 2 - 100,Crafty.screenHeight/2 - 40);
         }
     });
 
