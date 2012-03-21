@@ -1,0 +1,27 @@
+body, html { margin:0; padding: 0; overflow:hidden; font-family:Arial; font-size:20px;background: #000;}
+    
+#cr-stage { border:2px solid black; margin:5px auto; color:white }
+
+.Button{
+	background: #eb8b54;
+	border-radius: 3px;
+	box-shadow: 0 3px 0 #a14921;
+	font-size: 20px;
+	text-transform:uppercase;
+	text-shadow: 0 1px 0 #a14921;
+	text-align:center;
+	line-height: 26px;
+	cursor: pointer;
+}
+
+.Button:hover{
+	position: relative;
+	box-shadow: 0 5px 0 #a14921;
+	top: -2px;
+}
+
+.Button:active{
+	position: relative;
+	box-shadow: 0 1px 0 #a14921, 0 1px 5px rgba(0,0,0,0.2);
+	top: 2px;
+}
