@@ -30,11 +30,7 @@
         Crafty.screenHeight = winH;
         Crafty.init(Crafty.screenWidth, Crafty.screenHeight);
         //Crafty.canvas.init();
-        Crafty.score = 0;
-        Crafty.energy = 500;
-        Crafty.tempEnergy = 0;
-        Crafty.platGen = 10;
-        Crafty.platPrev = 0;
+        
 
         
 
@@ -48,8 +44,8 @@
             PlatformMain: [13, 1, 1, 2],
             PlatformLeft: [12, 1, 1, 2],
             PlatformRight: [14, 1, 1, 2],
-            SmallRoach: [7, 0],
-            LargeRoach: [0, 0, 2, 2],
+            SmallRoachSp: [7, 0],
+            LargeRoachSp: [0, 0, 2, 2],
             Rat: [0, 5, 4, 2],
             FoodBall: [0, 2, 2, 2],
             SpringYellow: [2, 2, 3, 1],
@@ -80,7 +76,7 @@
         Crafty.scene("loading", function () {
             //Load resources and change to main scene.
             Crafty.load(["media/spritesheet.png", "media/bg.png", "media/platforms.png"], function () {
-                Crafty.scene("main");
+                Crafty.scene("mainmenu");
             });
             Crafty.background("#333");
             Crafty.e("2D, DOM, Text").attr({
@@ -94,9 +90,34 @@
         });
         Crafty.scene("loading");
 
+        Crafty.scene("mainmenu", function() {
+            Crafty.background("#4c1b1d");
+            Crafty.e("2D, DOM, Text")
+                .attr({w:Crafty.screenWidth,h:100,x:0,y:100})
+                .text("CHAOS CAT")
+                .css({"text-align":"center","color":"#a8a8a8","font-size":"60px"});
+
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:200})
+                .button('Play!',function() {
+                    Crafty.scene("main");
+                });
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:250})
+                .button('Settings',function() {
+                    //Crafty.scene("main");
+                });
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:300})
+                .button('High Score',function() {
+                    //Crafty.scene("main");
+                });
+        });
+
         //Gameover scene
         Crafty.scene("gameover", function () {
-            Crafty.background("#666");
+            Crafty.background("#4c1b1d");
+
             Crafty.viewport.x = 0;
             Crafty.viewport.y = 0;
             Crafty.e("2D, DOM, Text").attr({
@@ -106,27 +127,47 @@
                 y: 100
             }).text("Game Over!").css({
                 "text-align": "center",
-                "color": "#FF0",
+                "color": "#a8a8a8",
                 "font-size": "60px"
             });
             var score = Crafty.e("2D, DOM, Text").attr({
                 w: Crafty.screenWidth,
                 h: 50,
                 x: 0,
-                y: 250
+                y: 170
             }).css({
                 "text-align": "center",
-                "color": "#0F0",
+                "color": "#a8a8a8",
                 "font-size": "100px"
             });
-            score.text(Crafty.score);
+            if(Crafty.score){
+                score.text(Crafty.score);
+            }else{
+                score.text('0');
+            }
+            
+
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:300})
+                .button('Reset Game',function() {
+                    Crafty.scene("main");
+                });
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:350})
+                .button('Main Menu',function() {
+                    Crafty.scene("mainmenu");
+                });
         });
 
         Crafty.scene("main", function () {
             Crafty.background("#666");
 
             initializeBackground();
-
+            Crafty.score = 0;
+            Crafty.energy = 500;
+            Crafty.tempEnergy = 0;
+            Crafty.platGen = 10;
+            Crafty.platPrev = 0;
             var player = Crafty.e("Player").attr({
                 x: 100,
                 y: 96,
