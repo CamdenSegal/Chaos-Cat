@@ -53,8 +53,8 @@
             WallRoach: [7, 1],
             CannedFood: [7, 1, 2, 1],
             Catnip: [6, 2, 2, 1],
-            Fly: [7, 4],
-            Chicken: [6, 3],
+            FlySp: [6, 3],
+            Chicken: [5, 2],
             Rock: [12, 4, 2, 1],
             FYEAH: [0,13,9,2]
         });
@@ -116,6 +116,7 @@
 
         //Gameover scene
         Crafty.scene("gameover", function () {
+            _gaq.push(['_trackEvent', 'Games','Chaos Cat','Gameover',Crafty.score]);
             Crafty.background("#4c1b1d");
 
             Crafty.viewport.x = 0;
