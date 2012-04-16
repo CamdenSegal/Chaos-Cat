@@ -30,13 +30,6 @@
         Crafty.screenHeight = winH;
         Crafty.init(Crafty.screenWidth, Crafty.screenHeight);
         //Crafty.canvas.init();
-        
-
-        
-
-        
-
-        
 
         //Specifies the location of sprites on the spritesheet
         Crafty.sprite(16, "media/spritesheet.png", {
@@ -46,7 +39,7 @@
             PlatformRight: [14, 1, 1, 2],
             SmallRoachSp: [7, 0],
             LargeRoachSp: [0, 0, 2, 2],
-            Rat: [0, 5, 4, 2],
+            RatSp: [0, 4, 4, 2],
             FoodBall: [0, 2, 2, 2],
             SpringYellow: [2, 2, 3, 1],
             SpringRed: [2, 3, 3, 1],
@@ -55,8 +48,10 @@
             Catnip: [6, 2, 2, 1],
             FlySp: [6, 3],
             Chicken: [5, 2],
-            Rock: [12, 4, 2, 1],
-            FYEAH: [0,13,9,2]
+            Rock: [12, 3, 2, 1],
+            FYEAH: [0,13,9,2],
+            Computer: [16,0,6,4],
+            Glass: [20,4,2,2]
         });
 
         //Specifies the location of sprites on the spritesheet
@@ -190,7 +185,6 @@
 
             Crafty.guiPanel.attach( Crafty.scoreText);
 
-
             var energyBar = Crafty.e("EnergyBar").attr({
                 x: 0,
                 y: 10,
@@ -199,6 +193,10 @@
                 h: 20
             });
             Crafty.guiPanel.attach( energyBar);
+
+            Crafty.bind("EnterFrame", function () {
+                
+            });
         });
     };
 }());
