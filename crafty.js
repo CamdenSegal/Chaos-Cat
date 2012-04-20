@@ -6628,7 +6628,7 @@ Crafty.c("particles", {
 			if (typeof repeat == "number") {
 				var j = 0;
 				//i is still set to the sound we played
-				sounds[i].addEventListener('ended', function () {
+				sound.addEventListener('ended', function () {
 					if (repeat == -1 || j <= repeat) {
 						this.currentTime = 0;
             this.play();

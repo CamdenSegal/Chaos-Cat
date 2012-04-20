@@ -71,6 +71,8 @@
         Crafty.scene("loading", function () {
             //Load resources and change to main scene.
             Crafty.load(["media/spritesheet.png", "media/bg.png", "media/platforms.png"], function () {
+                Crafty.audio.add("music",['media/musicslow.mp3','media/musicslow.ogg','media/musicslow.wav']);
+                Crafty.audio.add("musicfast",['media/musicfast.mp3','media/musicfast.ogg','media/musicfast.wav']);
                 Crafty.scene("mainmenu");
             });
             Crafty.background("#333");
@@ -107,6 +109,7 @@
                 .button('High Score',function() {
                     //Crafty.scene("main");
                 });
+            Crafty.audio.play('music',-1);
         });
 
         //Gameover scene
