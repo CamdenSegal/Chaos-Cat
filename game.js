@@ -93,22 +93,30 @@
                 .attr({w:Crafty.screenWidth,h:100,x:0,y:100})
                 .text("CHAOS CAT")
                 .css({"text-align":"center","color":"#a8a8a8","font-size":"60px"});
+            Crafty.e("2D, DOM, Text")
+                .attr({w:Crafty.screenWidth,h:100,x:0,y:160})
+                .text("By Camden Segal")
+                .css({"text-align":"center","color":"#999","font-size":"30px"});
+            Crafty.e("2D, DOM, Text")
+                .attr({w:Crafty.screenWidth,h:100,x:0,y:190})
+                .text("BETA!!")
+                .css({"text-align":"center","color":"#fff917","font-size":"20px"});
 
             Crafty.e("Button")
-                .attr({x: Crafty.screenWidth/2 - 100,y:200})
+                .attr({x: Crafty.screenWidth/2 - 100,y:300})
                 .button('Play!',function() {
                     Crafty.scene("main");
                 });
-            Crafty.e("Button")
-                .attr({x: Crafty.screenWidth/2 - 100,y:250})
-                .button('Settings',function() {
-                    //Crafty.scene("main");
-                });
-            Crafty.e("Button")
-                .attr({x: Crafty.screenWidth/2 - 100,y:300})
-                .button('High Score',function() {
-                    //Crafty.scene("main");
-                });
+            // Crafty.e("Button")
+            //     .attr({x: Crafty.screenWidth/2 - 100,y:250})
+            //     .button('Settings',function() {
+            //         //Crafty.scene("main");
+            //     });
+            // Crafty.e("Button")
+            //     .attr({x: Crafty.screenWidth/2 - 100,y:300})
+            //     .button('High Score',function() {
+            //         //Crafty.scene("main");
+            //     });
             Crafty.audio.play('music',-1);
         });
 
