@@ -88,6 +88,7 @@
         Crafty.scene("loading");
 
         Crafty.scene("mainmenu", function() {
+            Crafty.audio.mute(true);
             Crafty.background("#4c1b1d");
             Crafty.e("2D, DOM, Text")
                 .attr({w:Crafty.screenWidth,h:100,x:0,y:100})
@@ -103,7 +104,7 @@
                 .css({"text-align":"center","color":"#fff917","font-size":"20px"});
 
             Crafty.e("Button")
-                .attr({x: Crafty.screenWidth/2 - 100,y:300})
+                .attr({x: Crafty.screenWidth/2 - 100,y:250})
                 .button('Play!',function() {
                     Crafty.scene("main");
                 });
@@ -112,16 +113,17 @@
             //     .button('Settings',function() {
             //         //Crafty.scene("main");
             //     });
-            // Crafty.e("Button")
-            //     .attr({x: Crafty.screenWidth/2 - 100,y:300})
-            //     .button('High Score',function() {
-            //         //Crafty.scene("main");
-            //     });
-            Crafty.audio.play('music',-1);
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:300})
+                .button('High Score',function() {
+                    Crafty.scene("highscores");
+                });
+            
         });
 
         //Gameover scene
         Crafty.scene("gameover", function () {
+            Crafty.audio.mute(true);
             _gaq.push(['_trackEvent', 'Games','Chaos Cat','Gameover',Crafty.score]);
             Crafty.background("#4c1b1d");
 
@@ -129,9 +131,9 @@
             Crafty.viewport.y = 0;
             Crafty.e("2D, DOM, Text").attr({
                 w: Crafty.screenWidth,
-                h: 100,
+                h: 60,
                 x: 0,
-                y: 100
+                y: 20
             }).text("Game Over!").css({
                 "text-align": "center",
                 "color": "#a8a8a8",
@@ -141,7 +143,7 @@
                 w: Crafty.screenWidth,
                 h: 50,
                 x: 0,
-                y: 170
+                y: 70
             }).css({
                 "text-align": "center",
                 "color": "#a8a8a8",
@@ -152,21 +154,86 @@
             }else{
                 score.text('0');
             }
+            // ScoreoidQuery({
+            //     'method':'createScore',
+            //     'score': Crafty.score,
+            //     'username' : 'Anon'}, function(scores){});
+            var name = Crafty.e("NameEntry")
+                .attr({x: (Crafty.screenWidth/2)-45,y:230});
+            name.makeLetters();
             
-
-            Crafty.e("Button")
+             Crafty.e("Button")
                 .attr({x: Crafty.screenWidth/2 - 100,y:300})
+                .button('Submit Score',function() {
+                    ScoreoidQuery({
+                        'method':'createScore',
+                        'score': Crafty.score,
+                        'username' : name.getName()}, function(scores){});
+                    Crafty.scene("highscores")
+                });
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:350})
                 .button('Reset Game',function() {
                     Crafty.scene("main");
                 });
             Crafty.e("Button")
-                .attr({x: Crafty.screenWidth/2 - 100,y:350})
+                .attr({x: Crafty.screenWidth/2 - 100,y:400})
                 .button('Main Menu',function() {
                     Crafty.scene("mainmenu");
                 });
         });
+        Crafty.scene("highscores", function(){
+            Crafty.audio.mute(true);
+            Crafty.background("#4c1b1d");
+
+            Crafty.viewport.x = 0;
+            Crafty.viewport.y = 0;
+
+            Crafty.e("2D, DOM, Text").attr({
+                w: Crafty.screenWidth,
+                h: 60,
+                x: 0,
+                y: 20
+            }).text("High Scores").css({
+                "text-align": "center",
+                "color": "#a8a8a8",
+                "font-size": "60px"
+            });
+
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:400})
+                .button('Main Menu',function() {
+                    Crafty.scene("mainmenu");
+                });
+            ScoreoidQuery({
+                'method':'getScores',
+                'order': 'desc',
+                'order_by': 'score',
+                'limit': '10'}, function(response){
+                    var i, score, disp;
+                    for(i in response){
+                        score = response[i];
+                        console.log(score['Player']['username']+": "+score['Score']['score']);
+                        disp = Crafty.e("2D,DOM,Text")
+                            .attr({x:100,y:40*i+130,w:300})
+                            .css({'text-align':'left',
+                                  'font-size':'30px',
+                                  'font-family':'"Courier New",Courier,monotype'});
+                        if(i >= 5){
+                            disp.shift((Crafty.screenWidth-400),-200);
+                        }
+                        var num = parseInt(i,10) + 1;
+                        disp.text(num+". "+score['Player']['username']+": "+score['Score']['score']);
+                    }
+                });
+
+
+            //Crafty.scene("mainmenu");
+        });
 
         Crafty.scene("main", function () {
+            Crafty.audio.mute(true);
+            Crafty.audio.play('music',-1);
             Crafty.background("#666");
 
             initializeBackground();

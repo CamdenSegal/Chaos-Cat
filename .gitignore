@@ -1,2 +1,5 @@
 *-min.js
 *.psd
+roach*
+*.php
+analytics.js
