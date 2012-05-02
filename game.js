@@ -6,26 +6,26 @@
     window.onload = function () {
         //start crafty
         var winW = 800, winH = 480;
-        if (document.body && document.body.offsetWidth) {
-         winW = document.body.offsetWidth;
-         winH = document.body.offsetHeight;
-        }
-        if (document.compatMode=='CSS1Compat' &&
-            document.documentElement &&
-            document.documentElement.offsetWidth ) {
-         winW = document.documentElement.offsetWidth;
-         winH = document.documentElement.offsetHeight;
-        }
-        if (window.innerWidth && window.innerHeight) {
-         winW = window.innerWidth;
-         winH = window.innerHeight;
-        }
-        if(winW > 800){
-            winW = 800;
-        }
-        if(winH > 480){
-            winH = 480;
-        }
+        // if (document.body && document.body.offsetWidth) {
+        //  winW = document.body.offsetWidth;
+        //  winH = document.body.offsetHeight;
+        // }
+        // if (document.compatMode=='CSS1Compat' &&
+        //     document.documentElement &&
+        //     document.documentElement.offsetWidth ) {
+        //  winW = document.documentElement.offsetWidth;
+        //  winH = document.documentElement.offsetHeight;
+        // }
+        // if (window.innerWidth && window.innerHeight) {
+        //  winW = window.innerWidth;
+        //  winH = window.innerHeight;
+        // }
+        // if(winW > 800){
+        //     winW = 800;
+        // }
+        // if(winH > 480){
+        //     winH = 480;
+        // }
         Crafty.screenWidth = winW;
         Crafty.screenHeight = winH;
         Crafty.init(Crafty.screenWidth, Crafty.screenHeight);
@@ -108,17 +108,27 @@
                 .button('Play!',function() {
                     Crafty.scene("main");
                 });
-            // Crafty.e("Button")
-            //     .attr({x: Crafty.screenWidth/2 - 100,y:250})
-            //     .button('Settings',function() {
-            //         //Crafty.scene("main");
-            //     });
+            Crafty.e("Button")
+                .attr({x: Crafty.screenWidth/2 - 100,y:350})
+                .button('Instructions',function() {
+                    Crafty.scene("instructions");
+                });
             Crafty.e("Button")
                 .attr({x: Crafty.screenWidth/2 - 100,y:300})
                 .button('High Score',function() {
                     Crafty.scene("highscores");
                 });
             
+        });
+
+        Crafty.scene("instructions",function(){
+            Crafty.audio.mute(true);
+            Crafty.background("url(media/instructions.png) no-repeat #4c1b1d");
+            Crafty.e("Button")
+                .attr({x:Crafty.screenWidth/2-100,y:400})
+                .button('Main Menu',function() {
+                    Crafty.scene("mainmenu");
+                });
         });
 
         //Gameover scene
